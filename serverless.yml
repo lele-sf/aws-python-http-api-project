@@ -1,0 +1,53 @@
+service: aws-python-http-api-project
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.11
+  region: us-west-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action: 
+        - dynamodb:*
+      Resource:
+      - arn:aws:dynamodb:us-west-1:980754976893:table/TodoTable
+
+functions:
+  addTodo:
+    handler: handlers/addTodo.addTodo #file_name.function_name
+    events:
+      - httpApi:
+          path: /
+          method: post
+  fetchTodos:
+    handler: handlers/fetchTodos.fetchTodos
+    events:
+      - httpApi:
+          path: /todos
+          method: get
+  fetchTodo:
+    handler: handlers/fetchTodo.fetchTodo
+    events:
+      - httpApi:
+          path: /todo/{id}
+          method: get
+  updateStatusTodo:
+    handler: handlers/updateStatusTodo.updateStatusTodo
+    events:
+      - httpApi:
+          path: /todo/{id}
+          method: put
+
+resources:
+  Resources:
+    TodoTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: TodoTable
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
