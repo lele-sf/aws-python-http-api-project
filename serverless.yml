@@ -10,7 +10,7 @@ provider:
       Action: 
         - dynamodb:*
       Resource:
-      - arn:aws:dynamodb:us-west-1:980754976893:table/TodoTable
+      - YourDynamodbTableArn
 
 functions:
   addTodo:

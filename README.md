@@ -1,101 +1,56 @@
-<!--
-title: 'AWS Simple HTTP Endpoint example in Python'
-description: 'This template demonstrates how to make a simple HTTP API with Python running on AWS Lambda and API Gateway using the Serverless Framework.'
-layout: Doc
-framework: v3
-platform: AWS
-language: python
-authorLink: 'https://github.com/serverless'
-authorName: 'Serverless, inc.'
-authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
--->
+# AWS Python HTTP API Project
 
-# Serverless Framework Python HTTP API on AWS
+This README provides an overview of an AWS Python HTTP API project. The project is configured using the Serverless Framework and consists of AWS Lambda functions and a DynamoDB table for managing a to-do list.
 
-This template demonstrates how to make a simple HTTP API with Python running on AWS Lambda and API Gateway using the Serverless Framework.
+## Serverless Configuration
 
-This template does not include any kind of persistence (database). For more advanced examples, check out the [serverless/examples repository](https://github.com/serverless/examples/)  which includes DynamoDB, Mongo, Fauna and other examples.
+The project's configuration is defined in the `serverless.yml` file, and it includes various sections:
 
-## Usage
+### Service
 
-### Deployment
+- **Service Name:** `aws-python-http-api-project`: This is the name of your Serverless service.
+- **Framework Version:** 3: Specifies the version of the Serverless Framework being used.
 
-```
-$ serverless deploy
-```
+### Provider
 
-After deploying, you should see output similar to:
+- **Name:** AWS: Indicates that the project will be deployed on AWS.
+- **Runtime:** Python 3.11: Specifies the runtime environment for the Lambda functions.
+- **Region:** `us-west-1`: Specifies the AWS region where the project will be deployed.
+- **IAM Role Statements:** This section defines permissions for DynamoDB actions. You need to replace `YourDynamodbTableArn` with the actual ARN of your DynamoDB table.
 
-```bash
-Deploying aws-python-http-api-project to stage dev (us-east-1)
+### Functions
 
-✔ Service deployed to stack aws-python-http-api-project-dev (140s)
+The project includes four Lambda functions:
 
-endpoint: GET - https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com/
-functions:
-  hello: aws-python-http-api-project-dev-hello (2.3 kB)
-```
+1. **addTodo**: Adds a to-do item to the DynamoDB table. It is triggered by an HTTP POST request to the root path (`/`).
 
-_Note_: In current form, after deployment, your API is public and can be invoked by anyone. For production deployments, you might want to configure an authorizer. For details on how to do that, refer to [http event docs](https://www.serverless.com/framework/docs/providers/aws/events/apigateway/).
+2. **fetchTodos**: Retrieves all to-do items from the DynamoDB table. It is triggered by an HTTP GET request at the path `/todos`.
 
-### Invocation
+3. **fetchTodo**: Fetches a single to-do item from the DynamoDB table based on the provided `id`. It is triggered by an HTTP GET request at the path `/todo/{id}`.
 
-After successful deployment, you can call the created application via HTTP:
+4. **updateStatusTodo**: Updates the completion status of a to-do item in the DynamoDB table based on the provided `id`. It is triggered by an HTTP PUT request at the path `/todo/{id}`.
 
-```bash
-curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/
-```
+### Resources
 
-Which should result in response similar to the following (removed `input` content for brevity):
+- **DynamoDB Table: TodoTable**: This section defines a DynamoDB table named `TodoTable` with specified attributes and a key schema.
 
-```json
-{
-  "message": "Go Serverless v3.0! Your function executed successfully!",
-  "input": {
-    ...
-  }
-}
-```
+## How to Deploy
 
-### Local development
+To deploy this project, follow these steps:
 
-You can invoke your function locally by using the following command:
+1. Clone this repository.
+2. Navigate to the project directory.
+3. Run the command `sls deploy` to deploy the project to AWS.
 
-```bash
-serverless invoke local --function hello
-```
+## How to Use
 
-Which should result in response similar to the following:
+Once the project is deployed, you can use the HTTP API to interact with the to-do list:
 
-```
-{
-  "statusCode": 200,
-  "body": "{\n  \"message\": \"Go Serverless v3.0! Your function executed successfully!\",\n  \"input\": \"\"\n}"
-}
-```
+- To add a to-do item, send a POST request to the root path (`/`) with a JSON body containing the to-do item.
+- To fetch all to-do items, send a GET request to `/todos`.
+- To fetch a single to-do item, send a GET request to `/todo/{id}`, where `{id}` is the unique identifier of the to-do item.
+- To update the completion status of a to-do item, send a PUT request to `/todo/{id}` with a JSON body containing the `completed` field.
 
-Alternatively, it is also possible to emulate API Gateway and Lambda locally by using `serverless-offline` plugin. In order to do that, execute the following command:
+## Additional Information
 
-```bash
-serverless plugin install -n serverless-offline
-```
-
-It will add the `serverless-offline` plugin to `devDependencies` in `package.json` file as well as will add it to `plugins` in `serverless.yml`.
-
-After installation, you can start local emulation with:
-
-```
-serverless offline
-```
-
-To learn more about the capabilities of `serverless-offline`, please refer to its [GitHub repository](https://github.com/dherault/serverless-offline).
-
-### Bundling dependencies
-
-In case you would like to include 3rd party dependencies, you will need to use a plugin called `serverless-python-requirements`. You can set it up by running the following command:
-
-```bash
-serverless plugin install -n serverless-python-requirements
-```
-
-Running the above will automatically add `serverless-python-requirements` to `plugins` section in your `serverless.yml` file and add it as a `devDependency` to `package.json` file. The `package.json` file will be automatically created if it doesn't exist beforehand. Now you will be able to add your dependencies to `requirements.txt` file (`Pipfile` and `pyproject.toml` is also supported but requires additional configuration) and they will be automatically injected to Lambda package during build process. For more details about the plugin's configuration, please refer to [official documentation](https://github.com/UnitedIncome/serverless-python-requirements).
+For more details and customization options, refer to the [Serverless Framework documentation](https://www.serverless.com/framework/docs).
